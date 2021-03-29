@@ -6,8 +6,19 @@ import java.util.Scanner;
 
 public class StackTrace {
     public static void main(String[] args) {
-        int result = divide();
-        System.out.println(result);
+
+        // catches all errors
+        //could remove the try catch from divide and catch(ArithmeticException | NoSuchElementException e) in main!
+        try {
+            int result = divide();
+            System.out.println(result);
+        } catch(ArithmeticException e){
+            System.out.println(e.toString());
+            System.out.println("Unable to perform division, autopilot shutting down!");
+        }
+
+
+
     }
 
     // sends a a specific exception based on bad input.
@@ -16,14 +27,11 @@ public class StackTrace {
         try {
            x = getInt();
            y = getInt();
+           System.out.println("x is " + x + " y is " + y);
+            return x/y;
        } catch(NoSuchElementException e){
            throw new ArithmeticException("no suitable input");
-       }
-        System.out.println("x is " + x + " y is " + y);
-
-        try {
-            return x/y;
-        } catch(ArithmeticException er){
+       } catch(ArithmeticException e){
             throw new ArithmeticException("Attempt to divide by zero");
         }
 
