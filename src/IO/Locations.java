@@ -11,31 +11,41 @@ public class Locations implements Map<Integer, Location> {
 
     private static Map<Integer, Location> locations = new HashMap<>();
 
-    public static void main(String[] args) {
-        FileWriter locFile = null;
+    // can add throws to method to expect it as potential issue.
+    public static void main(String[] args) throws IOException {
 
-
-        try {
-            locFile = new FileWriter("Locations.txt");
-            for (Location location : locations.values()) {
-                locFile.write(location.getLocationID() + "," + location.getDescription() + "\n");
+        try(FileWriter locFile = new FileWriter("locations.txt")){
+            for (Location location: locations.values()){
+                locFile.write(location.getLocationID() + ", " + location.getDescription() + "\n");
             }
-
-        } catch(IOException e){
-            System.out.println("In catch block");
-            e.printStackTrace();
-        } finally {
-            System.out.println("in finally block");
-            try{
-                if(locFile != null) {
-                    System.out.println("Attempting to close locfile");
-                    locFile.close();
-                }
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-
         }
+
+//        FileWriter locFile = null;
+//        try {
+//            locFile = new FileWriter("Locations.txt");
+//            for (Location location : locations.values()) {
+//                locFile.write(location.getLocationID() + "," + location.getDescription() + "\n");
+//
+//                // can throw your own exception
+//                //throw new IOException("test exception thrown while writing!");
+//            }
+//
+//        } //catch(IOException e){
+////            System.out.println("In catch block");
+////            e.printStackTrace();
+//        //}
+//        finally {
+//            System.out.println("in finally block");
+//            //try{
+//                if(locFile != null) {
+//                    System.out.println("Attempting to close locfile");
+//                    locFile.close();
+//                //}
+//            //} catch (IOException e){
+//                //e.printStackTrace();
+//            }
+//
+//        }
     }
 
     static {
