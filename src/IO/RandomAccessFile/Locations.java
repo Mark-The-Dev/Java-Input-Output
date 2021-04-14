@@ -11,10 +11,25 @@ public class Locations implements Map<Integer, Location> {
 
     public static void main(String[] args) throws IOException {
 
-        try (ObjectOutputStream locFile = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("locations.dat")))) {
-            for (Location location: locations.values()){
-                locFile.writeObject(location);
-            }
+        // rwd means allowing reading and writing and also that writes will occur synchronously.
+        // It's important to let the random access file handle the synchronous writing especially in multiple threaded applications.
+        try (RandomAccessFile rao = new RandomAccessFile("locations_rand.dat", "rwd")){
+            rao.writeInt(locations.size());
+            // each index record will store 3 integers: The locationId, The offset for location, and the size of the location length.
+
+            // multiply the size by 3 (three records) multiply that by the size of integer by bytes.
+            int indexSize = locations.size() * 3 * Integer.BYTES;
+
+            // calculate the current position of the file pointer to the index size to account for the value we have already written to the file.
+            // We also have to account for the integer that we are about to write to the file the location offset we just calculated.
+            // This will give us the offset for the location section.
+            int locationStart = (int) (indexSize + rao.getFilePointer() + Integer.BYTES);
+            rao.writeInt(locationStart);
+
+            long indexStart = rao.getFilePointer();
+
+
+
         }
 
         }
