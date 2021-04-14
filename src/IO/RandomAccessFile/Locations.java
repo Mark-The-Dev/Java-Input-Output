@@ -112,29 +112,31 @@ public class Locations implements Map<Integer, Location> {
                 System.out.println("IOException in static initializer: " + e.getMessage());
             }
 
-
-//        try (ObjectInputStream locFile = new ObjectInputStream(new BufferedInputStream(new FileInputStream("locations.dat")))){
-//            boolean eof = false;
-//            while(!eof){
-//                try {
-//                    Location location = (Location) locFile.readObject();
-//                    System.out.println("Read location " + location.getLocationID() + " : " + location.getDescription() );
-//                    System.out.println("Found " + location.getExits().size() + " exits");
-//                    locations.put(location.getLocationID(), location);
-//
-//
-//                } catch (EOFException e){
-//                    eof = true;
-//                }
-//            }
-//
-//        } catch (IOException io){
-//            System.out.println("IO Exception " + io.getMessage());
-//        } catch (ClassNotFoundException e){
-//            System.out.println("ClassNotFoundException " + e.getMessage());
-//        }
-
     }
+
+    public Location getLocation(int locationId) throws IOException{
+        IndexRecord record = index.get(locationId);
+        ra.seek(record.getStartByte());
+        int id = ra.readInt();
+        String description = ra.readUTF();
+        String exits = ra.readUTF();
+        String[] exitPart = exits.split(",");
+
+        Location location = new Location(locationId, description, null);
+
+        if(locationId != 0){
+            for (int i =0; i<exitPart.length; i++){
+                System.out.println("exitPart = " + exitPart[i]);
+                System.out.println("exitPart[+1] = " + exitPart[i+1]);
+                String direction = exitPart[i];
+                int destination = Integer.parseInt(exitPart[++i]);
+                location.addExit(direction, destination);
+
+            }
+        }
+        return location;
+    }
+
     @Override
     public int size() {
         return locations.size();
@@ -194,6 +196,10 @@ public class Locations implements Map<Integer, Location> {
     @Override
     public Set<Entry<Integer, Location>> entrySet() {
         return locations.entrySet();
+    }
+
+    public void close() throws IOException {
+        ra.close();
     }
 }
 
